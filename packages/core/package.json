@@ -1,0 +1,51 @@
+{
+  "name": "@kitefrost/core",
+  "version": "1.2.0-alpha.2",
+  "description": "Shared runtime core (transport, auth, errors, shared-core resource clients) that every per-pack KiteFrost SDK depends on (PPI-3, D-PPI-SDK-BUNDLING Option A).",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && printf '{\"type\":\"module\"}' > dist/esm/package.json && printf '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --import tsx tests/*.test.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "kitefrost",
+    "sdk",
+    "core",
+    "runtime"
+  ],
+  "homepage": "https://kitefrost.ai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kitefrost/typescript-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kitefrost/typescript-sdk/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
