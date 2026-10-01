@@ -6,7 +6,7 @@
  * CORE_VERSION to emit a compatible dependency range and to assert that the
  * installed core matches the contract version it was generated against.
  */
-export const CORE_VERSION = '1.2.0-alpha.2';
+export const CORE_VERSION = '1.2.0-alpha.3';
 
 /**
  * Assert that an installed core version satisfies the major version a per-pack
