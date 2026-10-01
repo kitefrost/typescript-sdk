@@ -187,6 +187,9 @@ export class SessionsResource extends BaseResource {
 
 /** ttrpg - pack-specific resource. */
 export class TtrpgResource extends BaseResource {
+  check_journal_continuity<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/continuity/check`, body);
+  }
   create_encounter<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/encounters`, body);
   }
