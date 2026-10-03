@@ -190,6 +190,9 @@ export class TtrpgResource extends BaseResource {
   check_journal_continuity<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/continuity/check`, body);
   }
+  check_markdown_notes<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/continuity/check-notes`, body);
+  }
   create_encounter<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/encounters`, body);
   }
