@@ -1,6 +1,6 @@
 {
   "name": "@kitefrost/core",
-  "version": "1.2.0-alpha.3",
+  "version": "1.2.0-alpha.4",
   "description": "Shared runtime core (transport, auth, errors, shared-core resource clients) that every per-pack KiteFrost SDK depends on (PPI-3, D-PPI-SDK-BUNDLING Option A).",
   "main": "./dist/cjs/index.js",
   "types": "./dist/cjs/index.d.ts",

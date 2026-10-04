@@ -193,6 +193,12 @@ export class TtrpgResource extends BaseResource {
   check_markdown_notes<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/continuity/check-notes`, body);
   }
+  check_records_route<T = unknown>(project_id: string): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/continuity/check-records`);
+  }
+  check_spoilers_route<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/continuity/spoiler-check`, body);
+  }
   create_encounter<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/encounters`, body);
   }
@@ -232,6 +238,9 @@ export class TtrpgResource extends BaseResource {
   get_note<T = unknown>(project_id: string, note_id: string): Promise<T> {
     return this.http.get<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/notes/${encodeURIComponent(note_id)}`);
   }
+  get_notes_key_map<T = unknown>(project_id: string): Promise<T> {
+    return this.http.get<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/notes/key-map`);
+  }
   get_quest<T = unknown>(project_id: string, quest_id: string): Promise<T> {
     return this.http.get<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/quests/${encodeURIComponent(quest_id)}`);
   }
@@ -255,6 +264,9 @@ export class TtrpgResource extends BaseResource {
   }
   list_sessions<T = unknown>(project_id: string): Promise<T> {
     return this.http.get<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/sessions`);
+  }
+  put_notes_key_map<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.patch<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/notes/key-map`, body);
   }
   quick_dialogue<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/quick-dialogue`, body);

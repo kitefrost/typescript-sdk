@@ -1,6 +1,6 @@
 {
   "name": "@kitefrost/ttrpg-gm",
-  "version": "1.2.0-alpha.3",
+  "version": "1.2.0-alpha.4",
   "description": "Per-pack KiteFrost SDK for the ttrpg-gm pack (clean brand-host URLs; depends on @kitefrost/core). PPI-3.",
   "main": "./dist/cjs/index.js",
   "types": "./dist/cjs/index.d.ts",
@@ -32,7 +32,7 @@
   "homepage": "https://kitefrost.ai",
   "license": "MIT",
   "dependencies": {
-    "@kitefrost/core": "^1.2.0-alpha.3"
+    "@kitefrost/core": "^1.2.0-alpha.4"
   },
   "devDependencies": {
     "@types/node": "^20.12.0",
