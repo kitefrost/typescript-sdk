@@ -274,6 +274,9 @@ export class TtrpgResource extends BaseResource {
   refine_quest<T = unknown>(project_id: string, quest_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/quests/${encodeURIComponent(quest_id)}/refine`, body);
   }
+  session_brief<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/notes/brief`, body);
+  }
   update_encounter<T = unknown>(project_id: string, encounter_id: string, body: Record<string, unknown>): Promise<T> {
     return this.http.patch<T>(`/v1/projects/${encodeURIComponent(project_id)}/ttrpg-gm/encounters/${encodeURIComponent(encounter_id)}`, body);
   }
