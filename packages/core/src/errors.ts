@@ -4,6 +4,21 @@
  * same DX (KiteFrostApiError / KiteFrostAuthError / KiteFrostNotFoundError /
  * RateLimited, plus the feedbackId field from C-FB1).
  */
+/**
+ * Escape control characters in server-supplied text. Error text comes from
+ * whatever host the client points at; raw ANSI escapes or newlines would let that
+ * host rewrite the terminal or forge extra log lines, so they render visibly.
+ */
+export function printable(text: string): string {
+  // Cc (C0/C1 controls), Cf (bidi overrides/isolates, zero-width), Zl/Zp (line and
+  // paragraph separators) - the same set Python's str.isprintable() rejects for these.
+  // eslint-disable-next-line no-control-regex
+  return text.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, (c) => {
+    const named: Record<string, string> = { '\n': '\\n', '\r': '\\r', '\t': '\\t' };
+    return named[c] ?? `\\u${(c.codePointAt(0) ?? 0).toString(16).padStart(4, '0')}`;
+  });
+}
+
 export class KiteFrostApiError extends Error {
   readonly statusCode: number;
   readonly code?: string;
@@ -15,11 +30,11 @@ export class KiteFrostApiError extends Error {
   readonly feedbackId?: string;
 
   constructor(message: string, statusCode: number, code?: string, feedbackId?: string) {
-    super(message);
+    super(printable(String(message)));
     this.name = 'KiteFrostApiError';
     this.statusCode = statusCode;
-    this.code = code;
-    this.feedbackId = feedbackId;
+    this.code = typeof code === 'string' ? printable(code) : code;
+    this.feedbackId = typeof feedbackId === 'string' ? printable(feedbackId) : feedbackId;
   }
 }
 

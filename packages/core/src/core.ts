@@ -1,5 +1,5 @@
 import { ApiKeyAuth, type AuthProvider } from './auth.js';
-import { HttpClient } from './http.js';
+import { checkBaseUrl, HttpClient } from './http.js';
 import {
   AuthResource,
   BillingResource,
@@ -13,6 +13,8 @@ import {
 } from './resources.js';
 import { CORE_VERSION } from './version.js';
 
+export { checkBaseUrl, _resetBaseUrlWarnings } from './http.js';
+
 export const DEFAULT_BASE_URL = 'https://api.kitefrost.ai';
 
 /** Env var that repoints the client (e.g. an early-access API), same as the Python SDK. */
@@ -24,10 +26,16 @@ export const BASE_URL_ENV = 'KITEFROST_BASE_URL';
  * without `process` fall through to the default.
  */
 export function resolveBaseUrl(baseUrl: string | undefined): string {
-  if (baseUrl) return baseUrl;
   const env = typeof process !== 'undefined' ? process.env?.[BASE_URL_ENV] : undefined;
-  return env || DEFAULT_BASE_URL;
+  const [resolved, source] = baseUrl
+    ? [baseUrl, 'baseUrl']
+    : env
+      ? [env, BASE_URL_ENV]
+      : [DEFAULT_BASE_URL, 'default'];
+  checkBaseUrl(resolved, source);
+  return resolved;
 }
+
 
 export interface KiteFrostCoreConfig {
   /** Static API key. Provide this OR `auth`, not both. */

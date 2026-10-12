@@ -42,3 +42,8 @@ the default - the same precedence as the Python SDK:
 ```ts
 const core = new KiteFrostCore({ apiKey: 'sk_...', baseUrl: '<address from your invite>' });
 ```
+
+Your API key goes to whatever address this names, so the client checks it first: it
+must be `https` (plain `http` only for `localhost`), may not contain a `user:pass@`
+part, and an address outside `kitefrost.ai` prints a one-time warning naming the
+host your requests will actually reach. Only use the address KiteFrost gave you.
