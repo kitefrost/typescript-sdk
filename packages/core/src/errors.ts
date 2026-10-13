@@ -11,7 +11,9 @@
  */
 export function printable(text: string): string {
   // Cc (C0/C1 controls), Cf (bidi overrides/isolates, zero-width), Zl/Zp (line and
-  // paragraph separators) - the same set Python's str.isprintable() rejects for these.
+  // paragraph separators): the characters that can forge or hide log text. Python's
+  // str.isprintable() escapes a superset (also Zs other than space, Co, Cn); the
+  // difference is cosmetic, never a forging vector.
   // eslint-disable-next-line no-control-regex
   return text.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu, (c) => {
     const named: Record<string, string> = { '\n': '\\n', '\r': '\\r', '\t': '\\t' };
@@ -39,22 +41,22 @@ export class KiteFrostApiError extends Error {
 }
 
 export class KiteFrostAuthError extends KiteFrostApiError {
-  constructor(message = 'Unauthorized: invalid or missing credentials', feedbackId?: string) {
-    super(message, 401, 'UNAUTHORIZED', feedbackId);
+  constructor(message = 'Unauthorized: invalid or missing credentials', feedbackId?: string, statusCode = 401, code?: string) {
+    super(message, statusCode, code ?? (statusCode === 403 ? 'FORBIDDEN' : 'UNAUTHORIZED'), feedbackId);
     this.name = 'KiteFrostAuthError';
   }
 }
 
 export class KiteFrostNotFoundError extends KiteFrostApiError {
-  constructor(resource: string, feedbackId?: string) {
-    super(`Not found: ${resource}`, 404, 'NOT_FOUND', feedbackId);
+  constructor(resource: string, feedbackId?: string, code?: string) {
+    super(`Not found: ${resource}`, 404, code ?? 'NOT_FOUND', feedbackId);
     this.name = 'KiteFrostNotFoundError';
   }
 }
 
 export class ValidationError extends KiteFrostApiError {
-  constructor(message = 'Validation failed', feedbackId?: string) {
-    super(message, 422, 'VALIDATION_ERROR', feedbackId);
+  constructor(message = 'Validation failed', feedbackId?: string, code?: string) {
+    super(message, 422, code ?? 'VALIDATION_ERROR', feedbackId);
     this.name = 'ValidationError';
   }
 }
@@ -62,16 +64,16 @@ export class ValidationError extends KiteFrostApiError {
 export class RateLimited extends KiteFrostApiError {
   readonly retryAfter: number | undefined;
 
-  constructor(retryAfter?: number, feedbackId?: string) {
-    super('Rate limit exceeded', 429, 'RATE_LIMITED', feedbackId);
+  constructor(retryAfter?: number, feedbackId?: string, message = 'Rate limit exceeded', code?: string) {
+    super(message, 429, code ?? 'RATE_LIMITED', feedbackId);
     this.name = 'RateLimited';
     this.retryAfter = retryAfter;
   }
 }
 
 export class ServerError extends KiteFrostApiError {
-  constructor(message = 'Server error', statusCode = 500, feedbackId?: string) {
-    super(message, statusCode, 'SERVER_ERROR', feedbackId);
+  constructor(message = 'Server error', statusCode = 500, feedbackId?: string, code?: string) {
+    super(message, statusCode, code ?? 'SERVER_ERROR', feedbackId);
     this.name = 'ServerError';
   }
 }

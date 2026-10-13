@@ -149,14 +149,24 @@ export class HttpClient {
       let feedbackId: string | undefined;
       try {
         const body = (await response.json()) as {
-          error?: string;
-          detail?: string;
-          message?: string;
+          error?: unknown;
+          detail?: unknown;
+          message?: unknown;
           code?: string;
           feedback_id?: string;
         };
-        message = body.error ?? body.detail ?? body.message ?? message;
-        code = body.code;
+        // The API's `detail` is often structured ({message, code}); used as-is it
+        // printed "[object Object]" and lost the code. Same extraction as Python's
+        // KiteFrostError (FND-20260923-7A0) - doc-test parity finding 2026-10-12.
+        const raw = body.error ?? body.detail ?? body.message;
+        if (typeof raw === 'string') {
+          message = raw;
+        } else if (raw && typeof raw === 'object') {
+          const d = raw as { message?: unknown; code?: unknown };
+          message = typeof d.message === 'string' ? d.message : JSON.stringify(raw);
+          if (typeof d.code === 'string') code = d.code;
+        }
+        code = body.code ?? code;
         feedbackId = body.feedback_id;
       } catch {
         // ignore JSON parse failure
@@ -164,21 +174,21 @@ export class HttpClient {
 
       const status = response.status;
       if (status === 401 || status === 403) {
-        throw new KiteFrostAuthError(message, feedbackId);
+        throw new KiteFrostAuthError(message, feedbackId, status, code);
       }
       if (status === 404) {
-        throw new KiteFrostNotFoundError(response.url || message, feedbackId);
+        throw new KiteFrostNotFoundError(response.url || message, feedbackId, code);
       }
       if (status === 422) {
-        throw new ValidationError(message, feedbackId);
+        throw new ValidationError(message, feedbackId, code);
       }
       if (status === 429) {
         const raw = response.headers.get('Retry-After');
         const retryAfter = raw ? Number.parseInt(raw, 10) : undefined;
-        throw new RateLimited(Number.isNaN(retryAfter as number) ? undefined : retryAfter, feedbackId);
+        throw new RateLimited(Number.isNaN(retryAfter as number) ? undefined : retryAfter, feedbackId, message.startsWith('HTTP ') ? undefined : message, code);
       }
       if (status >= 500) {
-        throw new ServerError(message, status, feedbackId);
+        throw new ServerError(message, status, feedbackId, code);
       }
       throw new KiteFrostApiError(message, status, code, feedbackId);
     }

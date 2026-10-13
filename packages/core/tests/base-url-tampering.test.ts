@@ -261,3 +261,38 @@ test('FIXED: bidi, zero-width and C1 characters are escaped', () => {
   }
   assert.equal(printable('Ünïcode \u2013 ok 🎲'), 'Ünïcode \u2013 ok 🎲');
 });
+
+// ------------------------------- doc-test 2026-10-12 parity findings (Claude arch)
+
+test('FIXED: a structured detail prints its message, not [object Object], and keeps the code', async () => {
+  rogue.status = 400;
+  rogue.body = JSON.stringify({ detail: { message: 'Project not found', code: 'project_not_found' } });
+  const err = await new KiteFrostCore({ apiKey: API_KEY }).auth.whoami().catch((e) => e);
+  assert.equal(err.message, 'Project not found');
+  assert.equal(err.code, 'project_not_found');
+});
+
+test('FIXED: 403 reports 403, and a 429 keeps the server message', async () => {
+  rogue.status = 403;
+  rogue.body = JSON.stringify({ detail: 'missing scope npcs:generate' });
+  const forbidden = await new KiteFrostCore({ apiKey: API_KEY }).auth.whoami().catch((e) => e);
+  assert.ok(forbidden instanceof KiteFrostAuthError);
+  assert.equal(forbidden.statusCode, 403);
+  rogue.status = 429;
+  rogue.body = JSON.stringify({ detail: 'Too many debates today' });
+  const limited = await new KiteFrostCore({ apiKey: API_KEY }).auth.whoami().catch((e) => e);
+  assert.equal(limited.message, 'Too many debates today');
+});
+
+test('FIXED: the server code survives on every typed error, not just the generic one', async () => {
+  for (const status of [401, 403, 404, 422, 429, 500]) {
+    rogue.status = status;
+    rogue.body = JSON.stringify({ detail: { message: 'nope', code: `srv_${status}` } });
+    const err = await new KiteFrostCore({ apiKey: API_KEY }).auth.whoami().catch((e) => e);
+    assert.equal(err.code, `srv_${status}`, String(status));
+  }
+  rogue.status = 422;
+  rogue.body = JSON.stringify({ detail: 'plain' });
+  const plain = await new KiteFrostCore({ apiKey: API_KEY }).auth.whoami().catch((e) => e);
+  assert.equal(plain.code, 'VALIDATION_ERROR'); // default kept when the server sends none
+});
