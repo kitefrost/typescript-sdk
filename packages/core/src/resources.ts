@@ -70,11 +70,31 @@ export class ContextResource extends BaseResource {
 
 /** byok tag - bring-your-own-key provider credentials. */
 export class ByokResource extends BaseResource {
-  list<T = unknown>(): Promise<T> {
-    return this.http.get<T>('/v1/byok');
+  /**
+   * List credentials with list(projectId). Migration: list() is unsupported;
+   * pass the required project ID explicitly. The old projectless route did not exist.
+   */
+  list<T = unknown>(projectId: string): Promise<T> {
+    if (typeof projectId !== 'string' || !projectId) {
+      throw new TypeError('BYOK requires an explicit project ID; use byok.list(projectId)');
+    }
+    return this.http.get<T>(`/v1/projects/${encodeURIComponent(projectId)}/byok`);
   }
-  set<T = unknown>(body: Record<string, unknown>): Promise<T> {
-    return this.http.post<T>('/v1/byok', body);
+  /**
+   * Set credentials with set(projectId, body). Migration: set(body) is unsupported;
+   * pass the required project ID first. The old projectless route did not exist.
+   */
+  set<T = unknown>(projectId: string, body: Record<string, unknown>): Promise<T> {
+    if (typeof projectId !== 'string' || !projectId || body === undefined) {
+      throw new TypeError('BYOK requires an explicit project ID; use byok.set(projectId, body)');
+    }
+    return this.http.put<T>(`/v1/projects/${encodeURIComponent(projectId)}/byok`, body);
+  }
+  delete<T = unknown>(projectId: string): Promise<T> {
+    return this.http.delete<T>(`/v1/projects/${encodeURIComponent(projectId)}/byok`);
+  }
+  scan<T = unknown>(body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>('/v1/byok/scan', body);
   }
 }
 

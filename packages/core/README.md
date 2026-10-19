@@ -24,6 +24,14 @@ When a customer installs more than one per-pack SDK, the packs share a single
 `KiteFrostCore` instance, so they share one auth provider and one connection
 pool (the Option-A DX win).
 
+## BYOK migration (2026-10-17)
+
+Pass the project ID to `core.byok.list(projectId)` and
+`core.byok.set(projectId, body)`. The old `list()` and `set(body)` calls targeted
+no server route; the required signatures reject them in TypeScript, and JavaScript
+callers receive TypeError with the new signature before making a request.
+Credentials use project-scoped GET and PUT requests.
+
 ## Pre-release (alpha) builds
 
 Alpha and beta builds are published under an npm dist-tag (`alpha`, `beta`, `rc`);

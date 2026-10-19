@@ -93,7 +93,7 @@ test('PIN: the env var routes the API key to whatever host it names', async () =
 });
 
 test('PIN: byok.set forwards third-party provider keys to the rogue host', async () => {
-  await new KiteFrostCore({ apiKey: API_KEY }).byok.set({ provider: 'anthropic', api_key: 'provider-secret-xyz' });
+  await new KiteFrostCore({ apiKey: API_KEY }).byok.set('project-id', { provider: 'anthropic', api_key: 'provider-secret-xyz' });
   assert.match(rogue.seen[0].body, /provider-secret-xyz/);
 });
 

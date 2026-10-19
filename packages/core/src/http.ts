@@ -193,8 +193,12 @@ export class HttpClient {
       throw new KiteFrostApiError(message, status, code, feedbackId);
     }
 
-    if (response.status === 204) {
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
       return undefined as T;
+    }
+    const mediaType = response.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase();
+    if (mediaType && mediaType !== 'application/json' && !mediaType.endsWith('+json')) {
+      return response.text() as Promise<T>;
     }
     return response.json() as Promise<T>;
   }
@@ -220,6 +224,12 @@ export class HttpClient {
   async patch<T>(path: string, body: JsonBody): Promise<T> {
     return this.handleResponse<T>(
       await this.send(path, { method: 'PATCH', body: JSON.stringify(body) }),
+    );
+  }
+
+  async put<T>(path: string, body: JsonBody): Promise<T> {
+    return this.handleResponse<T>(
+      await this.send(path, { method: 'PUT', body: JSON.stringify(body) }),
     );
   }
 
