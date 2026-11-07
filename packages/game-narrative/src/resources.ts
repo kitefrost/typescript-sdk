@@ -167,8 +167,8 @@ export class FeedbackResource extends BaseResource {
   request_attachment_upload_url<T = unknown>(body: Record<string, unknown>): Promise<T> {
     return this.http.post<T>(`/v1/feedback/attachments/upload-url`, body);
   }
-  submit_feedback_envelope<T = unknown>(): Promise<T> {
-    return this.http.post<T>(`/v1/feedback`);
+  submit_feedback_envelope<T = unknown>(body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/feedback`, body);
   }
 }
 
