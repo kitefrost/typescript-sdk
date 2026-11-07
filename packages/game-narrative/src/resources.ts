@@ -237,8 +237,8 @@ export class LoreBibleResource extends BaseResource {
 
 /** scenes - pack-specific resource. */
 export class ScenesResource extends BaseResource {
-  create_scene<T = unknown>(project_id: string): Promise<T> {
-    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/game-narrative/scenes`);
+  create_scene<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/game-narrative/scenes`, body);
   }
   delete_scene<T = unknown>(project_id: string, session_id: string): Promise<T> {
     return this.http.delete<T>(`/v1/projects/${encodeURIComponent(project_id)}/game-narrative/scenes/${encodeURIComponent(session_id)}`);
@@ -306,8 +306,8 @@ export class SessionsResource extends BaseResource {
 
 /** story-arcs - pack-specific resource. */
 export class StoryArcsResource extends BaseResource {
-  create_story_arc<T = unknown>(project_id: string): Promise<T> {
-    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/game-narrative/story-arcs`);
+  create_story_arc<T = unknown>(project_id: string, body: Record<string, unknown>): Promise<T> {
+    return this.http.post<T>(`/v1/projects/${encodeURIComponent(project_id)}/game-narrative/story-arcs`, body);
   }
   delete_story_arc<T = unknown>(project_id: string, quest_id: string): Promise<T> {
     return this.http.delete<T>(`/v1/projects/${encodeURIComponent(project_id)}/game-narrative/story-arcs/${encodeURIComponent(quest_id)}`);
